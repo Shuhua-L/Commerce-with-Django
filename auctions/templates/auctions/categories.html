@@ -1,0 +1,17 @@
+{% extends "auctions/layout.html" %}
+<!-- Variables: cate_with_counts -->
+
+{% block body %}
+<div class="container">
+    <h2>All Categories:</h2>
+    <ul class="w-25 ">
+        {% for cate, cnt in cate_with_counts %}
+        <li class="d-flex align-items-start ">
+            <a href="{% url 'specific_category' cate %}" class="h5">{{ cate }}</a>
+            <span class="badge rounded-pill text-bg-light">{{ cnt }}</span>
+        </li>
+        {% endfor %}
+
+    </ul>
+</div>
+{% endblock %}

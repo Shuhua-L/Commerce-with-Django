@@ -1,0 +1,188 @@
+{% extends "auctions/layout.html" %}
+<!-- Variables: listing, current_price, comments, bid_form, comment_form, message?-->
+
+{% block body %}
+
+{% if not listing.is_active %}
+{% if listing.bids.all.last == user %}
+<h4 class="alert alert-success text-center">Congratulations! You have won the auction. &#127882; </h4>
+{% else %}
+<h4 class="alert alert-success text-center">Auctioin has been closed by seller. </h4>
+{% endif %}
+{% endif %}
+
+
+
+<div class="container">
+
+    <div class="row my-3">
+        <!-- Image -->
+        <div class="col-lg d-flex justify-content-center align-items-center">
+            <figure class="figure">
+                {% if listing.imageURL %}
+                <img class="rounded m-auto img-thumbnail img-fluid border-0" src="{{ listing.imageURL }}"
+                    alt=" Listing Image">
+                <figcaption class="figure-caption text-center">{{ listing.title }}</figcaption>
+                {% else %}
+                <img class="rounded m-auto img-thumbnail img-fluid border-0"
+                    src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22288%22%20height%3D%22287%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20288%20225%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_1829544a566%20text%20%7B%20fill%3A%23eceeef%3Bfont-weight%3Abold%3Bfont-family%3AArial%2C%20Helvetica%2C%20Open%20Sans%2C%20sans-serif%2C%20monospace%3Bfont-size%3A14pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_1829544a566%22%3E%3Crect%20width%3D%22288%22%20height%3D%22287%22%20fill%3D%22%2355595c%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2296.8203125%22%20y%3D%22118.8%22%3EAwesomeStuff%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E"
+                    alt=" Listing Image">
+                <figcaption class="figure-caption text-center">No Image Provided.</figcaption>
+                {% endif %}
+            </figure>
+        </div>
+
+        <!-- Listing information -->
+        <div class="col-lg">
+            <!-- title -->
+            <p class="h3"> {{ listing.title }} </p>
+
+            <!-- watchlist -->
+            <form action="{% url 'watchlist' %}" method="post" class="pb-3">
+                {% csrf_token %}
+                <!-- passing hidden info -->
+                <input hidden type="text" value="listing" name="origin">
+                <input hidden type="text" value="{{listing.id}}" name="listingID">
+
+                {% if listing in user.watchlist.all %}
+                <button type="submit" class="badge bg-danger text-white pb-0 border-0">Watchlist</button>
+
+                {% elif not user.is_authenticated %}
+                <a type="button" href="{% url 'login' %}" class="btn badge bg-light text-black pb-0 border-dark">Login
+                    to Save</a>
+
+                {% else %}
+                <button type="submit" class="badge bg-light text-black pb-0">Watchlist</button>
+
+                {% endif %}
+            </form>
+
+            <!-- price -->
+            <p class="lead"><strong>Current Price: &#128178;{{ current_price }}.00 </strong></p>
+
+            <!-- ? Closing Auction -->
+            {% if listing.seller == user and listing.is_active %}
+            <form action="{% url 'specific_listing' listing.id %}" method="post" class="pb-3">
+                {% csrf_token %}
+                <input hidden type="checkbox" checked="checked" name="close_auction">
+                <div class="input-group" style="width: 80%"">
+                    <button class=" btn btn-outline-success form-control fw-semibold" type="submit">&#10062; Close
+                    Auction</button>
+                </div>
+            </form>
+            {% endif %}
+
+            <!-- make a bid -->
+            <form action="{% url 'specific_listing' listing.id %}" method="post" class="pb-3">
+                {% csrf_token %}
+                {{ bid_form.edit_bid }}
+                <label class="small form-label">{{ listing.bids.all | length }} bid(s) so far.
+
+                    {% if not listing.bids.latest %}
+                    Make a bid now.
+                    {% elif not user.is_authenticated %}
+                    You must be <a href="{% url 'login' %}" class="text-decoration-none">logged in</a> to make a bid.
+                    {% elif listing.bids.latest == user %}
+                    Your bid is the current bid.
+                    {% else %}
+                    Your bid is not the current bid.
+                    {% endif %}</label>
+
+
+                <div class="input-group">
+                    <span class="input-group-text bg-light">$</span>
+                    {{ bid_form.price }}
+                    <span class="input-group-text bg-light">.00</span>
+                    {% if listing.is_active and user.is_authenticated %}
+                    <button class="btn btn-primary mx-1 fw-semibold" type="submit">Place Bid</button>
+                    {% else %}
+                    <button class="btn btn-primary mx-1 fw-semibold disabled" type="submit">Place Bid</button>
+                    {% endif %}
+                </div>
+
+                {% if message %}
+                <div class="alert alert-danger py-0 mt-1" role="alert">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2"
+                        viewBox="0 0 16 16" role="img" aria-label="Warning:">
+                        <path
+                            d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+                    </svg>{{ message }}
+                </div>
+                {% endif %}
+            </form>
+
+            <!-- details -->
+            <div class=" py-2 mx-0">
+                <a class="text-decoration-none text-black lead fw-normal" data-bs-toggle="collapse"
+                    href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    Details
+                    <i class="fa-solid fa-caret-down"></i>
+
+                </a>
+                <div class="collapse border-0 show" id="collapseExample">
+                    <dl class="row p-1">
+                        <dt class="col-sm-3 text-truncate">Listed By</dt>
+                        <dd class="col-sm-9">{{ listing.seller }}</dd>
+
+                        <dt class="col-sm-3">Category</dt>
+                        <dd class="col-sm-9">
+                            <span class="badge bg-primary text-white pb-0">{{listing.category}}</span>
+                        </dd>
+
+                        <dt class="col-sm-3 text-truncate">Description</dt>
+                        <dd class="col-sm-9">{{ listing.description }}</dd>
+
+                    </dl>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <hr class="text-white">
+
+    <!-- Comments -->
+    <div class="container g-3">
+
+        <!-- display comments -->
+        <p class="h3"> Comments | <a href="#NewComment" class="fs-5 text-muted">Add a Comment</a></p>
+
+        {% for cm in comments reversed %}
+        <div class="card w-75 ms-4 ps-2 mb-1 pb-3">
+            <div class="card-body">
+                <h5 class="card-title text-decoration-underline">{{ cm.user }} says: </h5>
+                <h6 class="card-subtitle small fst-italic mb-2 text-muted"> {{ cm.date }}</h6>
+                <p class="card-text lh-sm"> {{ cm.comment }}</p>
+            </div>
+        </div>
+        {% empty %}
+        <div class="card w-75 ms-4 ps-2">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted"> No comments yet.
+                </h6>
+            </div>
+        </div>
+        {% endfor %}
+
+        <hr class="text-white">
+
+        <!-- add commments -->
+        <p class="h3" id="NewComment"> Leave a comment now</p>
+        {% if user.is_authenticated %}
+        <form action="{% url 'specific_listing' listing.id %}" method="post" class="ms-4 pb-3">
+            {% csrf_token %}
+            {{ comment_form.edit_comment }}
+            <div class="input-group mb-2">
+                {{ comment_form.comment }}
+            </div>
+            <button class="btn btn-outline-primary fw-semibold" type="submit">Add Comment</button>
+        </form>
+
+        {% else %}
+        <h6 class="card-subtitle mb-2 text-muted ms-4 mt-2"> You must be
+            <a href="{% url 'login' %}" class="text-decoration-none">logged in</a> to post a comment.
+        </h6>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

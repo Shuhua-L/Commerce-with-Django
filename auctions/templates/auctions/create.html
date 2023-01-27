@@ -1,0 +1,59 @@
+{% extends "auctions/layout.html" %}
+<!-- Variables: form -->
+
+{% block body %}
+
+
+<!-- Django Form -->
+<div class="container ">
+    <h1>Create a new Listing</h1>
+    <form action="{% url 'create' %}" method="post">
+        {% csrf_token %}
+
+        <!-- Title -->
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">Title</label>
+            <div class="col-sm-8">
+                {{ form.title }}
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">Description</label>
+            <div class="col-sm-10">
+                {{ form.description }}
+            </div>
+        </div>
+
+        <!-- Image: optional -->
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label"> Image URL (Optional)</label>
+            <div class="col-sm-10">
+                {{ form.imageURL }}
+            </div>
+        </div>
+
+        <!-- Category: optional -->
+        <div class="row mb-3">
+            <label class="col-form-label col-sm-2">Category (Optional)</label>
+            <div class="col-sm-10 ">
+                {{ form.category }}
+            </div>
+        </div>
+
+        <!-- Initial price -->
+        <div class="row mb-3 input-group">
+            <label class="col-form-label col-sm-2">Starting Bid</label>
+            <div class="col-sm-10 ">
+                <span class="">$</span>
+                {{ form.init_bid }}
+                <span class="">.00</span>
+            </div>
+        </div>
+
+        <!-- Submission button -->
+        <button type="submit" class="btn btn-primary fw-semibold">Ready to Sell</button>
+    </form>
+</div>
+{% endblock %}

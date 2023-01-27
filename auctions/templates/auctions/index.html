@@ -1,0 +1,89 @@
+{% extends "auctions/layout.html" %}
+<!-- Variables: auction_with_price, message? -->
+
+{% block body %}
+
+<!-- Message? -->
+{% if message %}
+<h2>{{ message }}</h2>
+{% endif %}
+
+<!-- Active Listings START -->
+<div class="album py-5 bg-light">
+    <div class="container">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+            {% for listing, price in auction_with_price %}
+            <div class="col py-2">
+                <div class="card shadow text-center h-100">
+                    <!-- clickable card -->
+                    <a href="{% url 'specific_listing' listing.pk %}" class="stretched-link"></a>
+                    <p class="card-header px-2 h3">{{ listing.title }}</p>
+
+                    {% if listing.imageURL %}
+                    <img class="card-img-top img-thumbnail img-fluid" src="{{ listing.imageURL }}" alt=" Card image cap"
+                        style="max-height: 287px; width: auto; display: block;">
+                    {% else %}
+                    <img class="card-img-top image-thumbnail" alt="No Image Provided [100%x225]"
+                        src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22288%22%20height%3D%22287%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20288%20225%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_1829544a566%20text%20%7B%20fill%3A%23eceeef%3Bfont-weight%3Abold%3Bfont-family%3AArial%2C%20Helvetica%2C%20Open%20Sans%2C%20sans-serif%2C%20monospace%3Bfont-size%3A14pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_1829544a566%22%3E%3Crect%20width%3D%22288%22%20height%3D%22287%22%20fill%3D%22%2355595c%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2296.8203125%22%20y%3D%22118.8%22%3EAwesomeStuff%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E"
+                        data-holder-rendered="true" style="max-height: 287px; width: auto; display: block;">
+                    {% endif %}
+
+
+                    <div class="card-body">
+                        {% if listing.is_active %}
+                        <h5 class="card-title">
+                            Price: ${{ price }}.00 </h5>
+                        {% else %}
+                        <h5 class="card-title">
+                            CLOSED </h5>
+                        {% endif %}
+
+                        <p class="limited-text card-text ">{{ listing.description }}</p>
+
+                        <!-- <div class="d-flex justify-content-between align-items-center pop">
+                            {% if user.is_authenticated %}
+                            <form action="{% url 'watchlist' %}" method="post" class="">
+                                {% csrf_token %}
+                                <input hidden type="text" value="index" name="origin">
+                                <input hidden type="text" value="{{listing.id}}" name="listingID">
+                                <button type="submit" class="btn btn-sm btn-outline-light border-0"><span>
+                                        {% if listing in user.watchlist.all %}&#10084;
+                                        {% else %}&#129293;
+                                        {% endif%}</span></button>
+                            </form>
+                            {% endif %}
+                            <small class="text-muted">Listed by {{ listing.seller }}</small>
+                        </div> -->
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between align-items-center pop">
+                            <!-- watchlist -->
+                            {% if user.is_authenticated %}
+                            <form action="{% url 'watchlist' %}" method="post" class="">
+                                {% csrf_token %}
+                                <!-- passing listing info -->
+                                <input hidden type="text" value="index" name="origin">
+                                <input hidden type="text" value="{{listing.id}}" name="listingID">
+                                <button type="submit" class="btn btn-sm btn-outline-light border-0"><span>
+                                        {% if listing in user.watchlist.all %}&#10084;
+                                        {% else %}&#129293;
+                                        {% endif%}</span></button>
+                            </form>
+                            {% endif %}
+
+                            <small class="text-muted">Listed by {{ listing.seller }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            No active listings founded.
+            {% endfor %}
+
+        </div>
+    </div>
+</div>
+<!-- Active Listings END -->
+
+{% endblock %}
