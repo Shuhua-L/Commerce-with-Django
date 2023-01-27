@@ -19,9 +19,9 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = False
 DEBUG_PROPAGATE_EXCEPTIONS = True
 
-ALLOWED_HOSTS = ['yourapp.up.railway.app', '.railway.com', '127.0.0.1']
+ALLOWED_HOSTS = ['AwesomeBids.up.railway.app', '.railway.com', '127.0.0.1']
 
-CSRF_TRUSTED_ORIGINS = ['https://yourapp.up.railway.app', 'https://*.railway.app']
+CSRF_TRUSTED_ORIGINS = ['https://AwesomeBids.up.railway.app', 'https://*.railway.app']
 
 
 # Application definition
@@ -111,6 +111,10 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Default primary key field type
+# https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Update database configuration from $DATABASE_URL.
 import dj_database_url
