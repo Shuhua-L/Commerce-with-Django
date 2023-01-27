@@ -1,1 +1,1 @@
-web: python3 manage.py migrate && gunicorn commerce.wsgi
+web: python3 manage.py migrate && pytho3 manage.py collectstatic && gunicorn commerce.wsgi
