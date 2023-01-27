@@ -54,7 +54,7 @@ AwesomeBids is an e-commerce auction platform similar to eBay that allows users 
    `pip3 install -r requirements.txt`
 
 2. Clone project to your computer
-   `git clone https://github.com/savannah-shuhua/project.git`
+   `git clone https://github.com/savannah-shuhua/Commerce-with-Django.git`
 
 3. Navigate to the project directory, migrate project and run the server
    `python3 manage.py migrate && python3 manage.py runserver`
