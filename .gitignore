@@ -8,4 +8,4 @@ media
 
 .DS_Store
 .env
-staticfiles/
+# staticfiles/
